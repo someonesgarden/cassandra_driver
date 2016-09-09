@@ -1,0 +1,69 @@
+FROM centos:latest
+
+MAINTAINER 0.1 Daisuke NISHIMURA d@someonesgarden.org
+
+RUN groupadd -r uwsgi && useradd -r -g uwsgi uwsgi
+RUN export TERM=xterm
+
+# YUMed basic functions
+RUN yum update  -y && yum clean all
+RUN yum install -y http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm
+RUN yum install -y epel-release && yum clean all
+RUN yum install -y gcc zlib-devel bzip2 bzip2-devel readline readline-devel sqlite sqlite-devel openssl openssl-devel httpd curl vim git wget tar && yum clean all
+RUN yum install -y php && yum clean all
+RUN yum install -y --enablerepo=nginx nginx
+
+# downloaded & set python 3 and pip
+RUN wget https://www.python.org/ftp/python/3.4.0/Python-3.4.0.tgz && tar zxvf Python-3.4.0.tgz
+WORKDIR Python-3.4.0
+RUN ./configure --prefix=/usr/local/python && make && make install
+RUN ln -s /usr/local/python/bin/python3 /usr/local/bin/python
+RUN ln -s /usr/local/python/bin/pip3.4 /usr/local/bin/pip
+RUN pip install --upgrade pip
+WORKDIR /
+
+# Flask nessecities
+RUN yum install -y nodejs npm --enablerepo=epel && yum clean all
+RUN pip install Flask==0.10.1 requests==2.5.1 redis==2.10.3
+RUN pip install uWSGI==2.0.8
+
+# Cassandra python driver
+RUN pip install cassandra-driver
+
+####################################
+
+WORKDIR /app
+COPY app /app
+
+RUN mkdir -p /usr/src/app
+COPY package.json /usr/src/app/
+
+WORKDIR /usr/src/app
+RUN npm install && npm update
+RUN npm install -g bower grunt-cli coffee-script && \
+echo '{ "allow_root": true }' > /root/.bowerrc
+
+RUN mkdir -p /usr/src/app/public
+WORKDIR /usr/src/app/public
+RUN bower install backbone underscore jquery  --save
+RUN bower install glyphicons glyphicons-halflings --save
+RUN bower install bootstrap --save
+RUN bower install angular angular-material \
+angular-messages angular-route \
+angular-resource angular-sanitize \
+angular-local-storage --save
+RUN bower install d3 --save
+
+
+#COPY . /usr/src/app
+COPY cmd.sh /
+COPY favicon.ico /
+
+
+EXPOSE 9090 9191 5000
+USER uwsgi
+
+
+CMD ["python", "/app/cassandra_server.py"]
+#CMD ["/usr/local/python/bin/uwsgi", "--http", "0.0.0.0:9090", "--wsgi-file", "/app/cassandra_server.py", "--callable", "app", "--stats", "0.0.0.0:9191"]
+#CMD ["/cmd.sh"]
