@@ -111,7 +111,7 @@ describe table persons;
 
 ### 参考
 <http://yurisubach.com/2016/03/24/cassandra-docker-test-cluster/>
-<http://qiita.com/masato/items/f0d924ef2854970a9391># cassandra_driver
+<http://qiita.com/masato/items/f0d924ef2854970a9391>
 
 ### Auto Build
 <https://hub.docker.com/r/someonesgarden/cassandra_driver>
