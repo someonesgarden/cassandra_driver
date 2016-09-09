@@ -12,6 +12,9 @@ sog_cassandra_term:
         - dnmonster
         - redis
 
+cassandra:
+    image: someonesgarden/cassandra_cluster:latest
+
 dnmonster:
     image: amouat/dnmonster:1.0
 
