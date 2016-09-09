@@ -38,7 +38,7 @@ WORKDIR /home/uwsgi/app/static
 RUN bower install backbone underscore jquery  --save
 RUN bower install bootstrap glyphicons glyphicons-halflings --save
 RUN bower install angular angular-material angular-messages angular-route angular-resource angular-sanitize angular-local-storage --save
-RUN bower install d3 --save
+
 
 WORKDIR /home/uwsgi
 USER uwsgi
