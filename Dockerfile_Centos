@@ -65,5 +65,5 @@ USER uwsgi
 
 
 CMD ["python", "/app/cassandra_server.py"]
-#CMD ["/usr/local/python/bin/uwsgi", "--http", "0.0.0.0:9090", "--wsgi-file", "/app/cassandra_server.py", "--callable", "app", "--stats", "0.0.0.0:9191"]
+#CMD ["/usr/local/python/bin/uwsgi", "--http", "0.0.0.0:9090", "--wsgi-file", "/home/uwsgi/app/main.py", "--callable", "app", "--stats", "0.0.0.0:9191"]
 #CMD ["/cmd.sh"]
